@@ -95,7 +95,7 @@ The API is deployed on a server and currently is only accessed through localhost
 
 ## ✍️ Authors <a name = "authors"></a>
 
-- [@priyacoding](https://github.com/priyacoding) - The whole damn thing
+- [@priyacoding](https://github.com/priyacoding) - Creator
 
 ## 🎉 Acknowledgements <a name = "acknowledgement"></a>
 
