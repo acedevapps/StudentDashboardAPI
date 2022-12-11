@@ -5,9 +5,12 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+
 	"github.com/gin-gonic/gin"
 	_ "github.com/mattn/go-sqlite3"
 )
+
+const url string = "http://localhost:3000"
 
 type user struct {
 	ID    string `json:"id"`
@@ -42,6 +45,27 @@ func addRow(u user) {
 		log.Fatal(err)
 	}
 
+}
+
+func dropRow(name string) {
+	db, err := sql.Open("sqlite3", "main.db")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	stmt, err := db.Prepare("DELETE FROM users WHERE mail = ?")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer stmt.Close()
+	defer db.Close()
+
+	_, err = stmt.Exec(name)
+
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func getRows() []user {
@@ -85,6 +109,15 @@ func getRows() []user {
 	return users
 }
 
+func getRowByName(name string) user {
+	for _, a := range getRows() {
+		if a.Email == name {
+			return a
+		}
+	}
+	return user{}
+}
+
 func showRows() {
 	db, err := sql.Open("sqlite3", "main.db")
 	if err != nil {
@@ -122,6 +155,7 @@ func showRows() {
 }
 
 func getUsers(c *gin.Context) {
+	c.Header("Access-Control-Allow-Origin", url)
 	c.IndentedJSON(http.StatusOK, getRows())
 }
 
@@ -129,11 +163,43 @@ func postUsers(c *gin.Context) {
 	var newUser user
 
 	if err := c.BindJSON(&newUser); err != nil {
+		c.Header("Access-Control-Allow-Origin", url)
 		return
 	}
 
 	addRow(newUser)
+	c.Header("Access-Control-Allow-Origin", url)
 	c.IndentedJSON(http.StatusCreated, newUser)
+	c.Header("Access-Control-Allow-Origin", url+"login")
+}
+
+func getUserBy(c *gin.Context) {
+	name := c.Param("name")
+	for _, a := range getRows() {
+		if a.Email == name {
+			c.Header("Access-Control-Allow-Origin", url)
+			c.IndentedJSON(http.StatusOK, a)
+			return
+		}
+	}
+	c.Header("Access-Control-Allow-Origin", url)
+	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "user not found"})
+}
+
+func updateToken(c *gin.Context) {
+	name := c.Param("name")
+	token := c.Param("token")
+	row := getRowByName(name)
+	if row == (user{}) {
+		c.Header("Access-Control-Allow-Origin", url)
+		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "user not found"})
+		return
+	}
+	row.Token = token
+	dropRow(name)
+	addRow(row)
+	c.Header("Access-Control-Allow-Origin", url)
+	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "user token replaced"})
 }
 
 func setupdb() {
@@ -156,9 +222,12 @@ func setupdb() {
 
 func main() {
 	setupdb()
+	showRows()
 	router := gin.Default()
 
 	router.GET("/users", getUsers)
+	router.GET("/users/:name", getUserBy)
+	router.GET("/users/:name/:token", updateToken)
 	router.POST("/users", postUsers)
 
 	router.Run("localhost:8080")
