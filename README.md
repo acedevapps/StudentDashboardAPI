@@ -36,7 +36,7 @@ Write about 1-2 paragraphs describing the purpose of your project.
 
 ## 🏁 Getting Started <a name = "getting_started"></a>
 
-These instructions will get you a basic idea of what the API entails and some example requests in python. To see the installations for prequisities use links in [built using](#⛏️-built-using)
+These instructions will get you a basic idea of what the API entails and some example requests in python. To see the installations for prequisities use links in [built using](#built_using)
 
 ### Prerequisites
 
