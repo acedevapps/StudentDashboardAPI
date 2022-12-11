@@ -27,8 +27,6 @@
 - [Deployment](#deployment)
 - [Usage](#usage)
 - [Built Using](#built_using)
-- [TODO](../TODO.md)
-- [Contributing](../CONTRIBUTING.md)
 - [Authors](#authors)
 - [Acknowledgments](#acknowledgement)
 
@@ -38,7 +36,7 @@ Write about 1-2 paragraphs describing the purpose of your project.
 
 ## 🏁 Getting Started <a name = "getting_started"></a>
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See [deployment](#deployment) for notes on how to deploy the project on a live system.
+These instructions will get you a basic idea of what the API entails and some example requests in python. To see the installations for prequisities use links in [built using](#⛏️-built-using)
 
 ### Prerequisites
 
@@ -65,7 +63,7 @@ Example of post request in python:
 ```python
 import requests
 
-x = requests.post("http://localhost:8080/users", json = {"id": "0", "name": "Zhenghan Zhong", "mail": "eee", "cred": "eee", "token": "eee", "link": ""})
+x = requests.post("http://localhost:8080/users", json = {"id": "0", "name": "John Doe", "mail": "j.doe@gmail.com", "cred": "cred", "token": "token", "link": ""})
 
 print(x.text)
 print(x.status_code)
